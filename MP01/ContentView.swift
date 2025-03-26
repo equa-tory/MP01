@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @Namespace private var animationNamespace
     @State private var selectedPlaylistItem: PlaylistData? = nil
+    @State private var selPl: Bool = false
     @Environment(\.colorScheme) var colorScheme
     @State var scrollPos = ScrollPosition()
     @State var isPlaying: Bool = false
@@ -23,7 +24,7 @@ struct ContentView: View {
                 if let selectedItem = selectedPlaylistItem {
                     expandedDetailView(for: selectedItem)
                 }
-                ControlPanel()
+                ControlPanel(selPl: $selPl)
             }
             .navigationTitle("MusicPlayer")
             .toolbar {
@@ -58,6 +59,7 @@ struct ContentView: View {
             .onTapGesture {
                 withAnimation(.spring()) {
                     selectedPlaylistItem = item
+                    selPl = true
                 }
             }
         }
@@ -76,6 +78,7 @@ struct ContentView: View {
                 .onTapGesture {
                     withAnimation(.spring()) {
                         selectedPlaylistItem = nil
+                        selPl = false
                     }
                 }
             
@@ -157,6 +160,7 @@ struct PlaylistData: Hashable {
 }
 
 struct ControlPanel: View {
+    @Binding var selPl: Bool
     @State private var isShowing: Bool = true
     @State private var isPlaying: Bool = false
     @Namespace private var anim
@@ -166,7 +170,7 @@ struct ControlPanel: View {
             RoundedRectangle(cornerRadius: 50)
                 .frame(width: isShowing ? .infinity : 100, height: 100)
                 .foregroundColor(Color.gray)
-                .shadow(radius: 8, x: 16, y: 16)
+                .shadow(radius: selPl ? 0 : 8, x: selPl ? 0 : 16, y: selPl ? 0 : 16)
                 .padding(.horizontal)
                 .animation(.smooth(duration: 0.3))
             
